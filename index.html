@@ -40,7 +40,10 @@
             </div>
           </div>
 
-          <div class="hud__vs"><div class="hud__vs-text">VS</div></div>
+          <div class="hud__vs">
+            <div class="hud__vs-text">VS</div>
+            <div class="hud__round" id="partBadge" hidden>Part 1</div>
+          </div>
 
           <div class="cell cell--right">
             <div class="cell__avatar cell__avatar--empty" id="avatar2" data-player="2">
@@ -54,7 +57,6 @@
           </div>
         </div>
 
-        <div class="part-badge" id="partBadge" hidden>Part 1</div>
       </div>
     </div>
   </section>
@@ -76,10 +78,10 @@
       <div class="row row--gap">
         <label class="field field--toggle">
           <input type="checkbox" id="showPartInput" />
-          <span>Show part badge</span>
+          <span>Show round label</span>
         </label>
         <label class="field field--inline">
-          <span class="field__label">Badge text</span>
+          <span class="field__label">Round label</span>
           <input type="text" id="partLabelInput" value="Part 1" />
         </label>
       </div>

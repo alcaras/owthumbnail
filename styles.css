@@ -105,7 +105,10 @@ html, body {
   pointer-events: none;
 }
 .thumb__logo {
-  width: 520px; height: auto; display: block;
+  /* Sized for legibility at YouTube's mobile thumbnail size
+     (~250px wide for a Shorts-style mobile feed cell). At 780px on a
+     1280-canvas, the logo dominates roughly 60% of the width. */
+  width: 780px; height: auto; display: block;
   filter: drop-shadow(0 0 20px rgba(231, 196, 119, 0.35))
           drop-shadow(0 4px 18px rgba(0, 0, 0, 0.7));
 }
@@ -147,6 +150,8 @@ html, body {
 .hud__vs {
   position: relative;
   display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 }
 .hud__vs::before,
 .hud__vs::after {
@@ -231,15 +236,17 @@ html, body {
 }
 .cell__civ:empty { visibility: hidden; }
 
-.part-badge {
-  position: absolute; top: 24px; right: 32px;
-  padding: 6px 16px;
+/* Round label — small crimson pill nested under the VS glyph */
+.hud__round {
+  padding: 4px 12px;
   background: var(--c-crimson);
   color: var(--c-parchment-hi);
   font-family: var(--f-display);
-  font-size: 18px; font-weight: 600;
-  letter-spacing: 0.3em;
+  font-size: 14px; font-weight: 600;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* =========================================================
