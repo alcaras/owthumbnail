@@ -69,11 +69,22 @@ function saveState() {
 
 /* ---------- helpers ---------- */
 
-// From the design spec.
-function fitName(name, { max = 12, base = 60, min = 32 } = {}) {
-  const n = (name || '').length;
-  if (n <= max) return base;
-  return Math.max(min, Math.round(base * max / n));
+// Measured fit. Renders the name at `base`, measures the actual rendered
+// width against the cell__text width, scales the font-size proportionally
+// if it overflows. Floor at 18px (anything smaller reads as a postscript on
+// a 1280×720 thumbnail). The spec's formula-based fitName doesn't shrink
+// enough for 20+ char names because Cinzel is a wide face.
+function fitName(nameEl, { base = 60, min = 18 } = {}) {
+  const parent = nameEl.parentElement; // .cell__text
+  if (!parent || parent.clientWidth === 0) return;
+  nameEl.style.fontSize = base + 'px';
+  // Accessing scrollWidth forces synchronous layout — fine here.
+  const naturalWidth = nameEl.scrollWidth;
+  const avail = parent.clientWidth;
+  if (naturalWidth <= avail) return;
+  // 0.98 leaves a hair of breathing room so rounding doesn't reintroduce overflow.
+  const size = Math.max(min, Math.floor(base * (avail / naturalWidth) * 0.98));
+  nameEl.style.fontSize = size + 'px';
 }
 
 // Safe filename fragment.
@@ -132,9 +143,9 @@ function render() {
     const player = state[`player${id}`];
     const cell = refs.cells[id];
 
-    // Name + auto-fit
+    // Name + auto-fit (measured against the actual cell__text width)
     cell.name.textContent = player.name || '';
-    cell.name.style.fontSize = fitName(player.name) + 'px';
+    fitName(cell.name);
 
     // Civ subtitle: nation name, with directional arrow per side.
     const nation = NATIONS_BY_SLUG[player.nation];

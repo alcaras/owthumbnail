@@ -130,7 +130,10 @@ html, body {
     0 0 0 1px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(231, 196, 119, 0.18);
   display: grid;
-  grid-template-columns: 1fr 120px 1fr;
+  /* minmax(0, 1fr) — without the 0 floor, a long unbreakable name's
+     min-content would force the track wider than its share and shove
+     the other cell off the canvas. */
+  grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1fr);
   align-items: stretch;
 }
 
