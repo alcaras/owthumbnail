@@ -31,11 +31,11 @@ const NATIONS = [
 const NATIONS_BY_SLUG = Object.fromEntries(NATIONS.map(n => [n.slug, n]));
 const crestPath = slug => `./assets/crests/${slug}.png`;
 
-const LS_KEY = 'owct-thumb-state-v2';
+const LS_KEY = 'owct-thumb-state-v3';
 
 const DEFAULT_STATE = {
-  player1: { name: 'Moovse', nation: 'persia', customAvatar: null },
-  player2: { name: 'Moose',  nation: 'greece', customAvatar: null },
+  player1: { name: 'Player 1', nation: 'persia', customAvatar: null },
+  player2: { name: 'Player 2', nation: 'greece', customAvatar: null },
   tournament: 'Community Tournament 2026',
   showPart: false,
   partLabel: 'Part 1',

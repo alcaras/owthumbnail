@@ -4,9 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OWCT 2026 — Thumbnail Generator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- crossorigin="anonymous" is REQUIRED — without it, html-to-image can't read
+     the @font-face rules during PNG export and Cinzel falls back to serif. -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin="anonymous">
 <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -33,7 +35,7 @@
             </div>
             <div class="cell__text">
               <div class="cell__role">PLAYER · 01</div>
-              <div class="cell__name" id="name1" style="font-size: 60px;">Moovse</div>
+              <div class="cell__name" id="name1" style="font-size: 60px;">Player 1</div>
               <div class="cell__civ" id="civ1"></div>
             </div>
           </div>
@@ -46,7 +48,7 @@
             </div>
             <div class="cell__text">
               <div class="cell__role">PLAYER · 02</div>
-              <div class="cell__name" id="name2" style="font-size: 60px;">Moose</div>
+              <div class="cell__name" id="name2" style="font-size: 60px;">Player 2</div>
               <div class="cell__civ" id="civ2"></div>
             </div>
           </div>
@@ -88,7 +90,7 @@
       <h2>Player 01</h2>
       <label class="field">
         <span class="field__label">Name</span>
-        <input type="text" class="js-name" data-player="1" value="Moovse" />
+        <input type="text" class="js-name" data-player="1" value="Player 1" />
       </label>
 
       <div class="nation-picker">
@@ -117,7 +119,7 @@
       <h2>Player 02</h2>
       <label class="field">
         <span class="field__label">Name</span>
-        <input type="text" class="js-name" data-player="2" value="Moose" />
+        <input type="text" class="js-name" data-player="2" value="Player 2" />
       </label>
 
       <div class="nation-picker">
