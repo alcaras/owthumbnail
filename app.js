@@ -31,14 +31,17 @@ const NATIONS = [
 const NATIONS_BY_SLUG = Object.fromEntries(NATIONS.map(n => [n.slug, n]));
 const crestPath = slug => `./assets/crests/${slug}.png`;
 
-const LS_KEY = 'owct-thumb-state-v3';
+const LS_KEY = 'owct-thumb-state-v4';
 
+// `round` = tournament stage (Round of 16, Quarterfinals…) — belongs to the top stack.
+// `part`  = which video of this match (Part 1, Part 2…) — pill under VS.
+// Both: empty string = hidden, no separate toggle.
 const DEFAULT_STATE = {
   player1: { name: 'Player 1', nation: 'persia', customAvatar: null },
   player2: { name: 'Player 2', nation: 'greece', customAvatar: null },
   tournament: 'Community Tournament 2026',
-  showPart: false,
-  partLabel: 'Part 1',
+  round: '',
+  part:  '',
 };
 
 let state = loadState();
@@ -120,6 +123,7 @@ const refs = {
   thumb:           $('#thumb'),
   previewFrame:    $('#previewFrame'),
   tournamentLine:  $('#tournamentLine'),
+  roundLine:       $('#roundLine'),
   partBadge:       $('#partBadge'),
   cells: {
     1: { avatar: $('#avatar1'), name: $('#name1'), civ: $('#civ1') },
@@ -127,8 +131,8 @@ const refs = {
   },
   ctrls: {
     tournament:    $('#tournamentInput'),
-    showPart:      $('#showPartInput'),
-    partLabel:     $('#partLabelInput'),
+    round:         $('#roundInput'),
+    part:          $('#partInput'),
   },
 };
 
@@ -136,8 +140,16 @@ const refs = {
 
 function render() {
   refs.tournamentLine.textContent = state.tournament || '';
-  refs.partBadge.hidden = !state.showPart;
-  refs.partBadge.textContent = state.partLabel || '';
+
+  // Round (top stack, gold caption) and Part (under-VS crimson pill) —
+  // both hide when blank.
+  const round = (state.round || '').trim();
+  refs.roundLine.textContent = round;
+  refs.roundLine.hidden = round === '';
+
+  const part = (state.part || '').trim();
+  refs.partBadge.textContent = part;
+  refs.partBadge.hidden = part === '';
 
   for (const id of [1, 2]) {
     const player = state[`player${id}`];
@@ -274,15 +286,15 @@ function wireInputs() {
     render();
   });
 
-  refs.ctrls.showPart.checked = state.showPart;
-  refs.ctrls.showPart.addEventListener('change', e => {
-    state.showPart = e.target.checked;
+  refs.ctrls.round.value = state.round;
+  refs.ctrls.round.addEventListener('input', e => {
+    state.round = e.target.value;
     render();
   });
 
-  refs.ctrls.partLabel.value = state.partLabel;
-  refs.ctrls.partLabel.addEventListener('input', e => {
-    state.partLabel = e.target.value;
+  refs.ctrls.part.value = state.part;
+  refs.ctrls.part.addEventListener('input', e => {
+    state.part = e.target.value;
     render();
   });
 
@@ -438,8 +450,8 @@ $('#resetBtn').addEventListener('click', () => {
   state = structuredClone(DEFAULT_STATE);
   // Sync the form fields back to defaults.
   refs.ctrls.tournament.value = state.tournament;
-  refs.ctrls.showPart.checked = state.showPart;
-  refs.ctrls.partLabel.value = state.partLabel;
+  refs.ctrls.round.value = state.round;
+  refs.ctrls.part.value = state.part;
   $$('.js-name').forEach(input => { input.value = state[`player${input.dataset.player}`].name; });
   render();
 });

@@ -26,6 +26,7 @@
         <div class="thumb__top">
           <img class="thumb__logo" src="./assets/owct-logo.png" alt="OWCT logo" crossorigin="anonymous" />
           <div class="thumb__tournament" id="tournamentLine">Community Tournament 2026</div>
+          <div class="thumb__round" id="roundLine" hidden></div>
         </div>
 
         <div class="hud" id="hud">
@@ -34,7 +35,6 @@
               <span class="cell__avatar-placeholder">avatar</span>
             </div>
             <div class="cell__text">
-              <div class="cell__role">PLAYER · 01</div>
               <div class="cell__name" id="name1" style="font-size: 60px;">Player 1</div>
               <div class="cell__civ" id="civ1"></div>
             </div>
@@ -50,7 +50,6 @@
               <span class="cell__avatar-placeholder">avatar</span>
             </div>
             <div class="cell__text">
-              <div class="cell__role">PLAYER · 02</div>
               <div class="cell__name" id="name2" style="font-size: 60px;">Player 2</div>
               <div class="cell__civ" id="civ2"></div>
             </div>
@@ -75,16 +74,14 @@
         <span class="field__label">Tournament line</span>
         <input type="text" id="tournamentInput" value="Community Tournament 2026" />
       </label>
-      <div class="row row--gap">
-        <label class="field field--toggle">
-          <input type="checkbox" id="showPartInput" />
-          <span>Show round label</span>
-        </label>
-        <label class="field field--inline">
-          <span class="field__label">Round label</span>
-          <input type="text" id="partLabelInput" value="Part 1" />
-        </label>
-      </div>
+      <label class="field">
+        <span class="field__label">Round <span class="muted">(tournament stage — leave blank to hide)</span></span>
+        <input type="text" id="roundInput" placeholder="e.g. Round of 16 · Quarterfinals · Final" />
+      </label>
+      <label class="field">
+        <span class="field__label">Part <span class="muted">(this match's video number — leave blank to hide)</span></span>
+        <input type="text" id="partInput" placeholder="e.g. Part 1" />
+      </label>
     </section>
 
     <!-- Player 1 -->
