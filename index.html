@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OWCT 2026 — Thumbnail Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- LEFT PANE: live preview -->
+  <section class="preview-pane">
+    <div class="preview-frame" id="previewFrame">
+      <!-- The .thumb is the single source of truth: shown here scaled, exported at native 1280×720. -->
+      <div class="thumb" id="thumb">
+        <img class="thumb__bg" id="thumbBg" src="./assets/fort.png" alt="" crossorigin="anonymous" />
+        <div class="thumb__scrim"></div>
+
+        <div class="thumb__top">
+          <img class="thumb__logo" src="./assets/owct-logo.png" alt="OWCT logo" crossorigin="anonymous" />
+          <div class="thumb__tournament" id="tournamentLine">Community Tournament 2026</div>
+        </div>
+
+        <div class="hud" id="hud">
+          <div class="cell cell--left">
+            <div class="cell__avatar cell__avatar--empty" id="avatar1" data-player="1">
+              <span class="cell__avatar-placeholder">avatar</span>
+            </div>
+            <div class="cell__text">
+              <div class="cell__role">PLAYER · 01</div>
+              <div class="cell__name" id="name1" style="font-size: 60px;">Moovse</div>
+              <div class="cell__civ" id="civ1"></div>
+            </div>
+          </div>
+
+          <div class="hud__vs"><div class="hud__vs-text">VS</div></div>
+
+          <div class="cell cell--right">
+            <div class="cell__avatar cell__avatar--empty" id="avatar2" data-player="2">
+              <span class="cell__avatar-placeholder">avatar</span>
+            </div>
+            <div class="cell__text">
+              <div class="cell__role">PLAYER · 02</div>
+              <div class="cell__name" id="name2" style="font-size: 60px;">Moose</div>
+              <div class="cell__civ" id="civ2"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="part-badge" id="partBadge" hidden>Part 1</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT PANE: controls -->
+  <aside class="controls">
+    <header class="controls__header">
+      <h1>Tournament Thumbnail</h1>
+      <p class="controls__sub">OWCT 2026 · 1280 × 720 YouTube thumbnail</p>
+    </header>
+
+    <!-- Tournament caption + part badge -->
+    <section class="ctrl-section">
+      <h2>Caption</h2>
+      <label class="field">
+        <span class="field__label">Tournament line</span>
+        <input type="text" id="tournamentInput" value="Community Tournament 2026" />
+      </label>
+      <div class="row row--gap">
+        <label class="field field--toggle">
+          <input type="checkbox" id="showPartInput" />
+          <span>Show part badge</span>
+        </label>
+        <label class="field field--inline">
+          <span class="field__label">Badge text</span>
+          <input type="text" id="partLabelInput" value="Part 1" />
+        </label>
+      </div>
+    </section>
+
+    <!-- Player 1 -->
+    <section class="ctrl-section" id="playerSection1" data-player="1">
+      <h2>Player 01</h2>
+      <label class="field">
+        <span class="field__label">Name</span>
+        <input type="text" class="js-name" data-player="1" value="Moovse" />
+      </label>
+
+      <div class="nation-picker">
+        <div class="nation-picker__label">Nation <span class="js-nation-current" data-player="1"></span></div>
+        <div class="nation-grid js-nation-grid" data-player="1"></div>
+      </div>
+
+      <div class="avatar-override">
+        <div class="avatar-override__current">
+          <div class="avatar-thumb js-avatar-drop" data-player="1">
+            <span class="avatar-thumb__empty">crest</span>
+          </div>
+          <div class="avatar-override__actions">
+            <div class="avatar-override__title">Custom avatar <span class="muted">(optional — overrides crest)</span></div>
+            <button type="button" class="btn btn--ghost js-upload-btn" data-player="1">Upload image…</button>
+            <button type="button" class="btn btn--link js-clear-btn" data-player="1" hidden>× Use crest</button>
+            <input type="file" class="js-file" data-player="1" accept="image/png,image/jpeg,image/webp" hidden />
+            <p class="hint">PNG, JPG, or WebP. Or drag onto the box. Cropped to a square. Nation color stays.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Player 2 -->
+    <section class="ctrl-section" id="playerSection2" data-player="2">
+      <h2>Player 02</h2>
+      <label class="field">
+        <span class="field__label">Name</span>
+        <input type="text" class="js-name" data-player="2" value="Moose" />
+      </label>
+
+      <div class="nation-picker">
+        <div class="nation-picker__label">Nation <span class="js-nation-current" data-player="2"></span></div>
+        <div class="nation-grid js-nation-grid" data-player="2"></div>
+      </div>
+
+      <div class="avatar-override">
+        <div class="avatar-override__current">
+          <div class="avatar-thumb js-avatar-drop" data-player="2">
+            <span class="avatar-thumb__empty">crest</span>
+          </div>
+          <div class="avatar-override__actions">
+            <div class="avatar-override__title">Custom avatar <span class="muted">(optional — overrides crest)</span></div>
+            <button type="button" class="btn btn--ghost js-upload-btn" data-player="2">Upload image…</button>
+            <button type="button" class="btn btn--link js-clear-btn" data-player="2" hidden>× Use crest</button>
+            <input type="file" class="js-file" data-player="2" accept="image/png,image/jpeg,image/webp" hidden />
+            <p class="hint">PNG, JPG, or WebP. Or drag onto the box. Cropped to a square. Nation color stays.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section class="ctrl-section ctrl-section--download">
+      <button type="button" class="btn btn--primary" id="downloadBtn">
+        ▼ Download PNG
+      </button>
+      <button type="button" class="btn btn--link" id="resetBtn">Reset everything</button>
+      <p class="hint" id="downloadHint">Saves as OWCT-2026-&lt;p1&gt;-vs-&lt;p2&gt;.png at native 1280 × 720.</p>
+    </section>
+  </aside>
+
+</div>
+
+<!-- html-to-image — used for PNG export only. MIT-licensed, browser-only. -->
+<script src="https://unpkg.com/html-to-image@1.11.13/dist/html-to-image.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

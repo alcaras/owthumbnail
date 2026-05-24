@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>OWCT 2026 — HUD Overlay (reference)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     Design tokens — copy these into your app as constants.
+     ========================================================= */
+  :root {
+    --c-navy:         #0e1828;
+    --c-navy-deep:    #070d18;
+    --c-parchment:    #e7dcc1;
+    --c-parchment-hi: #f5ecd3;
+    --c-gold:         #c9a352;
+    --c-gold-hi:      #e3c477;
+    --c-crimson:      #8c2a33;
+    --c-crimson-deep: #5a161c;
+    --hud-glass:      rgba(8, 14, 24, 0.74);
+
+    --f-display: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+    --f-ui:      'Inter', system-ui, sans-serif;
+    --f-mono:    'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  html, body { margin: 0; padding: 0; background: #14171c; min-height: 100%;
+               font-family: var(--f-ui); color: var(--c-parchment); }
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+
+  /* =========================================================
+     Thumbnail — fixed 1280×720 canvas. All children absolute.
+     Box-sizing is REQUIRED globally inside the thumb.
+     ========================================================= */
+  .thumb, .thumb * { box-sizing: border-box; }
+
+  .thumb {
+    position: relative;
+    width: 1280px; height: 720px;
+    overflow: hidden;
+    background: var(--c-navy-deep);
+    font-family: var(--f-ui);
+    /* responsive preview only — production should render at native 1280×720 */
+    transform-origin: top left;
+  }
+
+  /* Layer 1: fort image full-bleed, cropped to upper-center */
+  .thumb__bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+
+  /* Layer 2: top+bottom darkening so the logo and HUD bar read */
+  .thumb__scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(7, 13, 24, 0.62) 0%,
+      rgba(7, 13, 24, 0.00) 28%,
+      rgba(7, 13, 24, 0.00) 50%,
+      rgba(7, 13, 24, 0.92) 95%
+    );
+    pointer-events: none;
+  }
+
+  /* Layer 3: top stack — OWCT logo + tournament caption */
+  .thumb__top {
+    position: absolute; top: 30px; left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    pointer-events: none;
+  }
+  .thumb__logo {
+    width: 520px; height: auto; display: block;
+    filter: drop-shadow(0 0 20px rgba(231, 196, 119, 0.35))
+            drop-shadow(0 4px 18px rgba(0, 0, 0, 0.7));
+  }
+  .thumb__tournament {
+    font-family: var(--f-display);
+    font-size: 22px; font-weight: 600;
+    color: var(--c-gold-hi);
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Layer 4: bottom HUD bar */
+  .hud {
+    position: absolute;
+    left: 40px; right: 40px; bottom: 40px;
+    height: 200px;
+    background: var(--hud-glass);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid var(--c-gold);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(231, 196, 119, 0.18);
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr;
+    align-items: stretch;
+  }
+
+  /* Center VS column — gold dividers + glowing VS glyph */
+  .hud__vs {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hud__vs::before,
+  .hud__vs::after {
+    content: ''; position: absolute;
+    top: 18px; bottom: 18px; width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(231,196,119,0.6), transparent);
+  }
+  .hud__vs::before { left: 0; }
+  .hud__vs::after  { right: 0; }
+  .hud__vs-text {
+    font-family: var(--f-display);
+    font-size: 64px; font-weight: 700;
+    color: var(--c-gold-hi);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 24px rgba(231, 196, 119, 0.4);
+  }
+
+  /* Player cell */
+  .cell {
+    display: flex; align-items: center;
+    padding: 0 28px; gap: 22px;
+  }
+  .cell--left  { flex-direction: row; }
+  .cell--right { flex-direction: row-reverse; }
+
+  /* Avatar — 140×140 rounded square, gold border, faint inset bg */
+  .cell__avatar {
+    flex: none;
+    width: 140px; height: 140px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid var(--c-gold);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cell__avatar img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .cell__avatar--empty {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(231, 196, 119, 0.55);
+  }
+
+  /* Text block beside avatar */
+  .cell__text { flex: 1; min-width: 0; }
+  .cell--left  .cell__text { text-align: left; }
+  .cell--right .cell__text { text-align: right; }
+
+  .cell__role {
+    font-family: var(--f-mono);
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(231, 196, 119, 0.7);
+    margin-bottom: 6px;
+  }
+  .cell__name {
+    font-family: var(--f-display);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.005em;
+    color: var(--c-parchment-hi);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    /* size is set inline per name — see notes in README */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cell__civ {
+    font-family: var(--f-mono);
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(231, 220, 193, 0.55);
+    margin-top: 8px;
+  }
+
+  /* Optional Part badge — top-right corner */
+  .part-badge {
+    position: absolute; top: 24px; right: 32px;
+    padding: 6px 16px;
+    background: var(--c-crimson);
+    color: var(--c-parchment-hi);
+    font-family: var(--f-display);
+    font-size: 18px; font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<!--
+  ──────────────────────────────────────────────────────────────
+  This is a STATIC reference of Thumb 02 (HUD Overlay).
+  Default values shown: Moovse v. Moose, Community Tournament 2026.
+  To swap values in your real app, replace text nodes / img src.
+  ──────────────────────────────────────────────────────────────
+-->
+<div class="thumb" data-screen-label="HUD Overlay">
+
+  <img class="thumb__bg" src="assets/fort.png" alt="Chittor Fort background" />
+  <div class="thumb__scrim"></div>
+
+  <div class="thumb__top">
+    <img class="thumb__logo" src="assets/owct-logo.png"
+         alt="Old World: Empires of the Indus — Community Tournament" />
+    <div class="thumb__tournament">Community Tournament 2026</div>
+  </div>
+
+  <div class="hud">
+    <!-- Player 1 cell -->
+    <div class="cell cell--left">
+      <div class="cell__avatar cell__avatar--empty">avatar</div>
+      <div class="cell__text">
+        <div class="cell__role">PLAYER · 01</div>
+        <div class="cell__name" style="font-size: 60px;">Moovse</div>
+        <div class="cell__civ">› civ · placeholder</div>
+      </div>
+    </div>
+
+    <!-- VS column -->
+    <div class="hud__vs"><div class="hud__vs-text">VS</div></div>
+
+    <!-- Player 2 cell -->
+    <div class="cell cell--right">
+      <div class="cell__avatar cell__avatar--empty">avatar</div>
+      <div class="cell__text">
+        <div class="cell__role">PLAYER · 02</div>
+        <div class="cell__name" style="font-size: 60px;">Moose</div>
+        <div class="cell__civ">civ · placeholder ‹</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional Part badge — comment in/out as needed
+  <div class="part-badge">Part 1</div>
+  -->
+</div>
+
+</body>
+</html>
