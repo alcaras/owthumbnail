@@ -120,16 +120,6 @@ html, body {
   text-transform: uppercase;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
-.thumb__round {
-  font-family: var(--f-display);
-  font-size: 18px; font-weight: 500;
-  color: var(--c-gold);
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-  margin-top: 4px;
-}
-.thumb__round[hidden] { display: none; }
 
 .hud {
   position: absolute;
@@ -160,8 +150,6 @@ html, body {
 .hud__vs {
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  flex-direction: column;
-  gap: 8px;
 }
 .hud__vs::before,
 .hud__vs::after {
@@ -238,18 +226,30 @@ html, body {
 }
 .cell__civ:empty { visibility: hidden; }
 
-/* Round label — small crimson pill nested under the VS glyph */
+/* Round label — small crimson pill anchored beneath the VS glyph.
+   Absolute-positioned so it doesn't perturb the VS centering, and so it
+   can spill past the 120px VS column when the round name is long
+   (the cells either side have empty padding at this y, so the spill
+   reads as a centered overlay, not a collision). */
 .hud__round {
-  padding: 4px 12px;
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  padding: 5px 14px;
   background: var(--c-crimson);
   color: var(--c-parchment-hi);
   font-family: var(--f-display);
-  font-size: 14px; font-weight: 600;
-  letter-spacing: 0.24em;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  max-width: 440px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
 }
+.hud__round[hidden] { display: none; }
 
 /* =========================================================
    Controls (right pane)

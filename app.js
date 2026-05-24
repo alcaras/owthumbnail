@@ -31,17 +31,19 @@ const NATIONS = [
 const NATIONS_BY_SLUG = Object.fromEntries(NATIONS.map(n => [n.slug, n]));
 const crestPath = slug => `./assets/crests/${slug}.png`;
 
-const LS_KEY = 'owct-thumb-state-v4';
+const LS_KEY = 'owct-thumb-state-v5';
 
-// `round` = tournament stage (Round of 16, Quarterfinals…) — belongs to the top stack.
-// `part`  = which video of this match (Part 1, Part 2…) — pill under VS.
-// Both: empty string = hidden, no separate toggle.
+// `round` = tournament stage (Round 1, Round of 16, Quarterfinals…) —
+//           shown as the crimson pill beneath VS. Same matchup can recur
+//           across rounds, so this is the key distinguisher on a thumbnail.
+//           Empty = hidden. There is intentionally no "part" — that's
+//           title-text territory, and keeping it off the image means one
+//           thumbnail is reusable across all parts of a multi-part match.
 const DEFAULT_STATE = {
   player1: { name: 'Player 1', nation: 'persia', customAvatar: null },
   player2: { name: 'Player 2', nation: 'greece', customAvatar: null },
   tournament: 'Community Tournament 2026',
   round: '',
-  part:  '',
 };
 
 let state = loadState();
@@ -123,8 +125,7 @@ const refs = {
   thumb:           $('#thumb'),
   previewFrame:    $('#previewFrame'),
   tournamentLine:  $('#tournamentLine'),
-  roundLine:       $('#roundLine'),
-  partBadge:       $('#partBadge'),
+  roundBadge:      $('#roundBadge'),
   cells: {
     1: { avatar: $('#avatar1'), name: $('#name1'), civ: $('#civ1') },
     2: { avatar: $('#avatar2'), name: $('#name2'), civ: $('#civ2') },
@@ -132,7 +133,6 @@ const refs = {
   ctrls: {
     tournament:    $('#tournamentInput'),
     round:         $('#roundInput'),
-    part:          $('#partInput'),
   },
 };
 
@@ -141,15 +141,10 @@ const refs = {
 function render() {
   refs.tournamentLine.textContent = state.tournament || '';
 
-  // Round (top stack, gold caption) and Part (under-VS crimson pill) —
-  // both hide when blank.
+  // Round = crimson pill beneath VS. Empty → hidden.
   const round = (state.round || '').trim();
-  refs.roundLine.textContent = round;
-  refs.roundLine.hidden = round === '';
-
-  const part = (state.part || '').trim();
-  refs.partBadge.textContent = part;
-  refs.partBadge.hidden = part === '';
+  refs.roundBadge.textContent = round;
+  refs.roundBadge.hidden = round === '';
 
   for (const id of [1, 2]) {
     const player = state[`player${id}`];
@@ -289,12 +284,6 @@ function wireInputs() {
   refs.ctrls.round.value = state.round;
   refs.ctrls.round.addEventListener('input', e => {
     state.round = e.target.value;
-    render();
-  });
-
-  refs.ctrls.part.value = state.part;
-  refs.ctrls.part.addEventListener('input', e => {
-    state.part = e.target.value;
     render();
   });
 
@@ -451,7 +440,6 @@ $('#resetBtn').addEventListener('click', () => {
   // Sync the form fields back to defaults.
   refs.ctrls.tournament.value = state.tournament;
   refs.ctrls.round.value = state.round;
-  refs.ctrls.part.value = state.part;
   $$('.js-name').forEach(input => { input.value = state[`player${input.dataset.player}`].name; });
   render();
 });

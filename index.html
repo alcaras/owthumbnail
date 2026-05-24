@@ -26,7 +26,6 @@
         <div class="thumb__top">
           <img class="thumb__logo" src="./assets/owct-logo.png" alt="OWCT logo" crossorigin="anonymous" />
           <div class="thumb__tournament" id="tournamentLine">Community Tournament 2026</div>
-          <div class="thumb__round" id="roundLine" hidden></div>
         </div>
 
         <div class="hud" id="hud">
@@ -42,7 +41,9 @@
 
           <div class="hud__vs">
             <div class="hud__vs-text">VS</div>
-            <div class="hud__round" id="partBadge" hidden>Part 1</div>
+            <!-- Round pill is absolute-positioned so it doesn't push the VS off-center;
+                 the cells either side have empty padding at this y so spill is fine. -->
+            <div class="hud__round" id="roundBadge" hidden></div>
           </div>
 
           <div class="cell cell--right">
@@ -76,11 +77,7 @@
       </label>
       <label class="field">
         <span class="field__label">Round <span class="muted">(tournament stage — leave blank to hide)</span></span>
-        <input type="text" id="roundInput" placeholder="e.g. Round of 16 · Quarterfinals · Final" />
-      </label>
-      <label class="field">
-        <span class="field__label">Part <span class="muted">(this match's video number — leave blank to hide)</span></span>
-        <input type="text" id="partInput" placeholder="e.g. Part 1" />
+        <input type="text" id="roundInput" placeholder="e.g. Round 1 · Round of 16 · Quarterfinals · Final" />
       </label>
     </section>
 
